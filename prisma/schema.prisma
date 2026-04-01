@@ -1,0 +1,410 @@
+// Prisma schema for the application data stored in Supabase Postgres.
+// Supabase Auth is the source of truth for identities; public.profiles stores app roles and profile data.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model otp_codes {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  email      String
+  code       String
+  expires_at DateTime @db.Timestamptz
+  used       Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@index([email, code])
+  @@index([expires_at])
+  @@index([user_id])
+}
+
+model password_reset_tokens {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  token      String   @unique
+  expires_at DateTime @db.Timestamptz
+  used       Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@index([token])
+  @@index([expires_at])
+  @@index([user_id])
+}
+
+// ===============================
+// EXISTING: profiles (user roles & profile info)
+// ===============================
+
+model profiles {
+  id           String    @id @db.Uuid
+  full_name    String
+  email        String?
+  phone_number String?
+  university   String?
+  role         String    @default("student")
+  disabled     Boolean?  @default(false)
+  created_at   DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  events_created          events[]        @relation("EventCreator")
+  events_assigned         events[]        @relation("EventOrganizer")
+  scanner_event_assignments event_scanner_assignments[] @relation("EventScanner")
+  scanner_assignments_created event_scanner_assignments[] @relation("ScannerAssignmentCreator")
+  attendance_scans         attendance[]    @relation("AttendanceScanner")
+  registrations           registrations[]
+  admin_logs              admin_logs[]
+  organizer_logs          organizer_logs[]
+  form_fields_disabled_by event_form_fields[] @relation("DisabledBy")
+  form_fields_overridden  event_form_fields[] @relation("OverriddenBy")
+
+  @@unique([email])
+}
+
+// ===============================
+// EXISTING: events
+// ===============================
+
+model events {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title                  String
+  description            String?
+  location               String?
+  event_date             DateTime  @db.Date
+  start_time             DateTime  @db.Time()
+  end_time               DateTime  @db.Time()
+  capacity               Int
+  is_unlimited           Boolean?  @default(false)
+  show_capacity          Boolean?  @default(true)
+  is_registration_open   Boolean?  @default(true)
+  price                  Decimal?  @default(0) @db.Decimal(10, 2)
+  is_paid                Boolean?
+  pricing_type           String?   @default("free")
+  pricing_dropdown_label String?
+  event_type             String?   @default("free")
+  pricing_tiers          Json?     @default("[]")
+  image_url              String?
+  visibility             String?   @default("public")
+  status                 String?   @default("draft")
+  currency               String?   @default("INR")
+  qfix_link              String?
+  use_custom_qfix_link   Boolean?  @default(false)
+  use_dual_region_pricing Boolean?  @default(false)
+  dual_region_label      String?   @default("Where are you from?")
+  region_labels          Json?     @default("[]")
+  price_inr              Decimal?  @db.Decimal(10, 2)
+  price_usd              Decimal?  @db.Decimal(10, 2)
+  created_by             String?   @db.Uuid
+  assigned_organizer     String?   @db.Uuid
+  created_at             DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  creator             profiles?              @relation("EventCreator", fields: [created_by], references: [id])
+  organizer            profiles?              @relation("EventOrganizer", fields: [assigned_organizer], references: [id], onDelete: SetNull)
+  scanner_assignments  event_scanner_assignments[]
+  form_fields          event_form_fields[]
+  pricing_options      event_pricing_options[]
+  registrations        registrations[]
+  event_emails         event_emails[]
+
+  @@index([event_date])
+  @@index([assigned_organizer])
+  @@index([visibility])
+  @@index([event_type])
+}
+
+// ===============================
+// EXISTING: event_form_fields
+// ===============================
+
+model event_form_fields {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id          String?   @db.Uuid
+  label             String
+  field_type        String
+  required          Boolean?  @default(false)
+  options           Json?
+  disabled          Boolean?  @default(false)
+  disabled_by       String?   @db.Uuid
+  disabled_at       DateTime? @db.Timestamptz
+  overridden_by     String?   @db.Uuid
+  overridden_at     DateTime? @db.Timestamptz
+  original_required Boolean?
+  condition         Json?     @default("null")
+  created_at        DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  event              events?   @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  disabled_by_profile  profiles? @relation("DisabledBy", fields: [disabled_by], references: [id])
+  overridden_by_profile profiles? @relation("OverriddenBy", fields: [overridden_by], references: [id])
+  responses          registration_responses[]
+}
+
+// ===============================
+// EXISTING: event_pricing_options
+// ===============================
+
+model event_pricing_options {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id   String    @db.Uuid
+  label      String
+  price      Decimal   @db.Decimal(10, 2)
+  currency   String?   @default("INR")
+  price_inr  Decimal?  @db.Decimal(10, 2)
+  price_usd  Decimal?  @db.Decimal(10, 2)
+  created_at DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  event         events          @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  registrations registrations[]
+
+  @@index([event_id])
+  @@index([price])
+}
+
+// ===============================
+// EXISTING: registrations
+// ===============================
+
+model registrations {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id            String?   @db.Uuid
+  user_id             String?   @db.Uuid
+  status              String
+  entry_code          String?   @unique
+  pricing_type        String?   @default("free")
+  pricing_option_id   String?   @db.Uuid
+  paid_amount         Decimal?  @default(0) @db.Decimal(10, 2)
+  currency            String?   @default("INR")
+  payment_method      String?   @default("razorpay")
+  payment_proof_url   String?
+  verification_status String?
+  rejection_reason    String?
+  verified_by         String?   @db.Uuid
+  verified_at         DateTime? @db.Timestamptz
+  phone_number        String?
+  university          String?
+  created_at          DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  event                    events?                    @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  user                     profiles?                  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  pricing_option           event_pricing_options?      @relation(fields: [pricing_option_id], references: [id])
+  responses                registration_responses[]
+  payments                 payments[]
+  attendance               attendance?
+  registration_pricing_tiers registration_pricing_tiers[]
+
+  @@unique([event_id, user_id])
+  @@index([event_id])
+  @@index([status])
+  @@index([entry_code])
+  @@index([verification_status])
+}
+
+// ===============================
+// EXISTING: registration_responses
+// ===============================
+
+model registration_responses {
+  id              String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_id String? @db.Uuid
+  field_id        String? @db.Uuid
+  value           String?
+
+  // Relations
+  registration registrations? @relation(fields: [registration_id], references: [id], onDelete: Cascade)
+  field        event_form_fields? @relation(fields: [field_id], references: [id], onDelete: Cascade)
+}
+
+// ===============================
+// EXISTING: registration_pricing_tiers
+// ===============================
+
+model registration_pricing_tiers {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_id String    @db.Uuid
+  tier_id         String
+  tier_name       String
+  tier_price      Decimal   @db.Decimal(10, 2)
+  payment_id      String?
+  order_id        String?
+  amount          Int
+  created_at      DateTime? @default(now()) @db.Timestamptz
+  updated_at      DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  registration registrations @relation(fields: [registration_id], references: [id], onDelete: Cascade)
+
+  @@index([registration_id])
+  @@index([payment_id])
+}
+
+// ===============================
+// EXISTING: payments
+// ===============================
+
+model payments {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_id     String?   @db.Uuid
+  razorpay_order_id   String?   @unique
+  razorpay_payment_id String?   @unique
+  razorpay_signature  String?
+  amount              Decimal   @db.Decimal(10, 2)
+  status              String
+  created_at          DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  registration registrations? @relation(fields: [registration_id], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+// ===============================
+// EXISTING: attendance
+// ===============================
+
+model attendance {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_id String    @unique @db.Uuid
+  scanned_by_id   String?   @db.Uuid
+  scanned_by_role String?
+  checked_in_at   DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  registration registrations @relation(fields: [registration_id], references: [id], onDelete: Cascade)
+  scanned_by_profile profiles? @relation("AttendanceScanner", fields: [scanned_by_id], references: [id], onDelete: SetNull)
+}
+
+model event_scanner_assignments {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id     String    @db.Uuid
+  scanner_id   String    @db.Uuid
+  assigned_by  String?   @db.Uuid
+  created_at   DateTime? @default(now()) @db.Timestamptz
+
+  event       events    @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  scanner     profiles  @relation("EventScanner", fields: [scanner_id], references: [id], onDelete: Cascade)
+  assigned_by_profile profiles? @relation("ScannerAssignmentCreator", fields: [assigned_by], references: [id], onDelete: SetNull)
+
+  @@unique([event_id, scanner_id])
+  @@index([scanner_id])
+  @@index([event_id])
+}
+
+// ===============================
+// EXISTING: admin_logs
+// ===============================
+
+model admin_logs {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  admin_id   String?   @db.Uuid
+  action     String
+  details    Json?
+  created_at DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  admin profiles? @relation(fields: [admin_id], references: [id])
+}
+
+// ===============================
+// EXISTING: organizer_logs
+// ===============================
+
+model organizer_logs {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizer_id String?   @db.Uuid
+  action       String
+  details      Json?
+  created_at   DateTime? @default(now()) @db.Timestamptz
+
+  // Relations
+  organizer profiles? @relation(fields: [organizer_id], references: [id])
+
+  @@index([organizer_id])
+  @@index([created_at])
+}
+
+// ===============================
+// EXISTING: event_emails
+// ===============================
+
+model event_emails {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id        String   @db.Uuid
+  sent_by         String
+  sender_role     String
+  subject         String
+  body_html       String
+  recipient_count Int      @default(0)
+  sent_at         DateTime @default(now()) @db.Timestamptz
+  created_at      DateTime @default(now()) @db.Timestamptz
+  updated_at      DateTime @default(now()) @db.Timestamptz
+
+  // Relations
+  event events @relation(fields: [event_id], references: [id], onDelete: Cascade)
+
+  @@index([event_id])
+  @@index([sent_by])
+  @@index([sent_at])
+}
+
+// ===============================
+// NEW: site_settings (key-value store for app-wide settings)
+// ===============================
+
+model site_settings {
+  key        String   @id
+  value      String
+  updated_at DateTime @default(now()) @db.Timestamptz
+}
+
+// ===============================
+// NEW: razorpay_sync_hub_records (Isolated table for Razorpay Sync Hub)
+// ===============================
+
+model razorpay_sync_hub_records {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  razorpay_payment_id String    @unique
+  razorpay_order_id   String?
+  razorpay_signature  String?
+  amount              Decimal   @db.Decimal(10, 2)
+  currency            String    @default("INR")
+  status              String
+  method              String?
+  description         String?
+  email               String?
+  contact             String?
+  notes               Json?
+  fee                 Decimal?  @db.Decimal(10, 2)
+  tax                 Decimal?  @db.Decimal(10, 2)
+  error_code          String?
+  error_description   String?
+  acquirer_data       Json?
+  vpa                 String?
+  card_id             String?
+  bank                String?
+  wallet              String?
+  razorpay_created_at DateTime
+  synced_at           DateTime  @default(now()) @db.Timestamptz
+  
+  // Store the entire raw response from Razorpay as JSON
+  raw_response        Json
+  
+  // Reconciled status and metadata
+  registration_id     String?   @db.Uuid
+  event_id            String?   @db.Uuid
+  user_id             String?   @db.Uuid
+  reconciled          Boolean   @default(false)
+  reconciled_at       DateTime? @db.Timestamptz
+
+  @@index([razorpay_payment_id])
+  @@index([razorpay_order_id])
+  @@index([registration_id])
+  @@index([event_id])
+}

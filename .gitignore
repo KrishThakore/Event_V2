@@ -1,0 +1,58 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Next.js build output
+/.next
+/.next-dev
+/out
+/build
+
+# Vercel local state
+/.vercel
+
+# Coverage and logs
+/coverage
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+!.env.example
+
+# TypeScript / generated caches
+*.tsbuildinfo
+tsc_output.txt
+
+# Prisma local databases
+prisma/*.db
+prisma/*.db-journal
+
+# Runtime uploads, backups, and temp data
+/tmp
+/uploads
+/public/uploads
+
+# Local secrets / exports
+*.pem
+rzp-key.csv
+RZP.txt
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.windsurf/
+
+# Optional local helper files
+start-server.bat

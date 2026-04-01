@@ -1,0 +1,117 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#F7FBFF"/>
+  <rect width="1600" height="900" fill="url(#bgGlow)"/>
+  <circle cx="226" cy="184" r="248" fill="url(#orbLeft)" fill-opacity="0.88"/>
+  <circle cx="1344" cy="126" r="286" fill="url(#orbRight)" fill-opacity="0.82"/>
+  <circle cx="1072" cy="760" r="320" fill="url(#orbBottom)" fill-opacity="0.72"/>
+  <path d="M157 745C308 610 468 564 638 607C734 631 825 682 927 684C1085 687 1209 565 1368 567C1455 568 1528 599 1600 648V900H0V809C60 801 104 791 157 745Z" fill="url(#ground)"/>
+  <path d="M1120 246L993 490C981 513 957 528 931 528H676C648 528 623 510 613 484L530 286C515 249 542 210 583 210H1071C1116 210 1142 207 1147 229C1148 236 1140 243 1120 246Z" fill="url(#stageGlass)" fill-opacity="0.72" stroke="url(#stageStroke)" stroke-width="2"/>
+  <path d="M678 210H926L868 107C855 83 828 68 800 68C772 68 745 83 732 107L678 210Z" fill="url(#roof)" fill-opacity="0.95"/>
+  <path d="M588 522H1014V598H588V522Z" fill="url(#platform)"/>
+  <rect x="621" y="260" width="122" height="213" rx="24" fill="url(#panelA)" fill-opacity="0.92"/>
+  <rect x="753" y="260" width="94" height="213" rx="24" fill="url(#panelB)" fill-opacity="0.95"/>
+  <rect x="858" y="260" width="122" height="213" rx="24" fill="url(#panelC)" fill-opacity="0.92"/>
+  <rect x="641" y="285" width="82" height="15" rx="7.5" fill="white" fill-opacity="0.72"/>
+  <rect x="641" y="316" width="70" height="10" rx="5" fill="white" fill-opacity="0.4"/>
+  <rect x="641" y="338" width="56" height="10" rx="5" fill="white" fill-opacity="0.32"/>
+  <rect x="878" y="285" width="82" height="15" rx="7.5" fill="white" fill-opacity="0.72"/>
+  <rect x="878" y="316" width="70" height="10" rx="5" fill="white" fill-opacity="0.4"/>
+  <rect x="878" y="338" width="56" height="10" rx="5" fill="white" fill-opacity="0.32"/>
+  <path d="M785 261H815V474H785V261Z" fill="white" fill-opacity="0.85"/>
+  <path d="M800 218L827 261H773L800 218Z" fill="#0F172A"/>
+  <path d="M431 563C493 514 570 477 635 471" stroke="url(#beamLeft)" stroke-width="12" stroke-linecap="round" stroke-opacity="0.22"/>
+  <path d="M1163 560C1101 510 1029 478 964 471" stroke="url(#beamRight)" stroke-width="12" stroke-linecap="round" stroke-opacity="0.22"/>
+  <path d="M558 170L597 335" stroke="url(#lightPole)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M1043 170L1004 335" stroke="url(#lightPole)" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="595" cy="343" r="22" fill="#10B981"/>
+  <circle cx="1005" cy="343" r="22" fill="#38BDF8"/>
+  <circle cx="595" cy="343" r="11" fill="white" fill-opacity="0.86"/>
+  <circle cx="1005" cy="343" r="11" fill="white" fill-opacity="0.86"/>
+  <path d="M270 691C396 562 522 496 651 496" stroke="url(#crowdLeft)" stroke-width="20" stroke-linecap="round" stroke-opacity="0.2"/>
+  <path d="M1330 691C1204 562 1078 496 949 496" stroke="url(#crowdRight)" stroke-width="20" stroke-linecap="round" stroke-opacity="0.2"/>
+  <g opacity="0.95">
+    <circle cx="1240" cy="229" r="4" fill="#8B5CF6"/>
+    <circle cx="1268" cy="209" r="6" fill="#06B6D4"/>
+    <circle cx="1299" cy="238" r="5" fill="#10B981"/>
+    <circle cx="1324" cy="196" r="4" fill="#F59E0B"/>
+    <circle cx="1354" cy="232" r="6" fill="#8B5CF6"/>
+  </g>
+  <g opacity="0.82">
+    <circle cx="324" cy="233" r="5" fill="#0EA5E9"/>
+    <circle cx="352" cy="205" r="4" fill="#10B981"/>
+    <circle cx="382" cy="235" r="6" fill="#8B5CF6"/>
+    <circle cx="414" cy="196" r="4" fill="#F59E0B"/>
+  </g>
+  <defs>
+    <radialGradient id="bgGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 250) rotate(90) scale(650 950)">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EAF4FF"/>
+    </radialGradient>
+    <radialGradient id="orbLeft" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(226 184) rotate(90) scale(248)">
+      <stop stop-color="#D8B4FE"/>
+      <stop offset="1" stop-color="#D8B4FE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbRight" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1344 126) rotate(90) scale(286)">
+      <stop stop-color="#BFDBFE"/>
+      <stop offset="1" stop-color="#BFDBFE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbBottom" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1072 760) rotate(90) scale(320)">
+      <stop stop-color="#A7F3D0"/>
+      <stop offset="1" stop-color="#A7F3D0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="800" y1="567" x2="800" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E2F0FF" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#D6E9FF"/>
+    </linearGradient>
+    <linearGradient id="stageGlass" x1="800" y1="210" x2="800" y2="528" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#E0F2FE" stop-opacity="0.62"/>
+    </linearGradient>
+    <linearGradient id="stageStroke" x1="548" y1="172" x2="1102" y2="548" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#93C5FD"/>
+      <stop offset="0.5" stop-color="#A855F7"/>
+      <stop offset="1" stop-color="#10B981"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="800" y1="68" x2="800" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <linearGradient id="platform" x1="588" y1="522" x2="1014" y2="598" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="0.5" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="panelA" x1="621" y1="260" x2="743" y2="473" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <linearGradient id="panelB" x1="753" y1="260" x2="847" y2="473" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#C026D3"/>
+    </linearGradient>
+    <linearGradient id="panelC" x1="858" y1="260" x2="980" y2="473" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="beamLeft" x1="431" y1="563" x2="635" y2="471" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beamRight" x1="1163" y1="560" x2="964" y2="471" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#06B6D4" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="lightPole" x1="558" y1="170" x2="597" y2="335" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CBD5E1"/>
+      <stop offset="1" stop-color="#94A3B8"/>
+    </linearGradient>
+    <linearGradient id="crowdLeft" x1="270" y1="691" x2="651" y2="496" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="crowdRight" x1="1330" y1="691" x2="949" y2="496" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10B981"/>
+      <stop offset="1" stop-color="#10B981" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
